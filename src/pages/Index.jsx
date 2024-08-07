@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Cat, Heart, Info, Paw, Star, Eye, MessageCircle, ArrowRight, Camera, Gift } from "lucide-react";
+import { Cat, Heart, Info, Paw, Star, Eye, MessageCircle, ArrowRight, Camera, Gift, Sparkles } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Index = () => {
   const [likeCount, setLikeCount] = useState(0);
@@ -22,6 +23,7 @@ const Index = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [catName, setCatName] = useState("");
   const [catStory, setCatStory] = useState("");
+  const [isHovering, setIsHovering] = useState(false);
 
   const catImages = [
     "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -39,6 +41,14 @@ const Index = () => {
     { month: 'May', adoptions: 56 },
     { month: 'Jun', adoptions: 55 },
     { month: 'Jul', adoptions: 40 },
+  ];
+
+  const catFacts = [
+    "Cats sleep for about 70% of their lives.",
+    "A group of cats is called a clowder.",
+    "Cats have over 20 vocalizations, including the purr.",
+    "The first cat in space was French. She was named Felicette.",
+    "Cats can jump up to six times their length.",
   ];
 
   useEffect(() => {
@@ -144,6 +154,15 @@ const Index = () => {
 
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <motion.div
+          className="mb-8 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">Welcome to the Purr-fect World of Cats!</h2>
+          <p className="text-xl text-gray-600">Discover, learn, and celebrate our feline friends.</p>
+        </motion.div>
+        <motion.div
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -187,6 +206,32 @@ const Index = () => {
                 </motion.div>
               </div>
             </div>
+          </Card>
+
+          <Card className="mb-12">
+            <CardHeader>
+              <CardTitle className="text-2xl">Did You Know?</CardTitle>
+              <CardDescription>Fascinating Cat Facts</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Carousel className="w-full max-w-xs mx-auto">
+                <CarouselContent>
+                  {catFacts.map((fact, index) => (
+                    <CarouselItem key={index}>
+                      <div className="p-1">
+                        <Card>
+                          <CardContent className="flex aspect-square items-center justify-center p-6">
+                            <span className="text-lg text-center">{fact}</span>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </CardContent>
           </Card>
 
           <Tabs defaultValue="characteristics" className="mb-12">
@@ -270,7 +315,10 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <p className="mb-4">Coming soon! Stay tuned for an interactive quiz to test your cat expertise.</p>
-              <Button variant="outline">Notify Me When Available</Button>
+              <Button variant="outline">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Notify Me When Available
+              </Button>
             </CardContent>
           </Card>
 
@@ -290,7 +338,10 @@ const Index = () => {
                     <Label htmlFor="story">Your Cat's Story</Label>
                     <Textarea id="story" placeholder="Tell us about your cat" value={catStory} onChange={(e) => setCatStory(e.target.value)} />
                   </div>
-                  <Button type="submit">Submit Story</Button>
+                  <Button type="submit">
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Submit Story
+                  </Button>
                 </div>
               </form>
             </CardContent>
@@ -331,9 +382,14 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <p className="mb-4">Your donation can make a difference in the lives of cats waiting for their forever homes.</p>
-              <Button variant="outline">
-                <Gift className="mr-2 h-4 w-4" /> Make a Donation
-              </Button>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button variant="outline">
+                  <Gift className="mr-2 h-4 w-4" /> Make a Donation
+                </Button>
+              </motion.div>
             </CardContent>
           </Card>
         </motion.div>
