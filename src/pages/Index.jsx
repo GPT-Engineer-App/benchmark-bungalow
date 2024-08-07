@@ -3,16 +3,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Cat, Heart, Info, Paw, Star, Eye, MessageCircle, ArrowRight } from "lucide-react";
+import { Cat, Heart, Info, Paw, Star, Eye, MessageCircle, ArrowRight, Camera, Gift } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Index = () => {
   const [likeCount, setLikeCount] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [catName, setCatName] = useState("");
+  const [catStory, setCatStory] = useState("");
 
   const catImages = [
     "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -20,6 +29,16 @@ const Index = () => {
     "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     "https://images.unsplash.com/photo-1561948955-570b270e7c36?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  ];
+
+  const catAdoptionData = [
+    { month: 'Jan', adoptions: 65 },
+    { month: 'Feb', adoptions: 59 },
+    { month: 'Mar', adoptions: 80 },
+    { month: 'Apr', adoptions: 81 },
+    { month: 'May', adoptions: 56 },
+    { month: 'Jun', adoptions: 55 },
+    { month: 'Jul', adoptions: 40 },
   ];
 
   useEffect(() => {
@@ -49,6 +68,16 @@ const Index = () => {
     setProgress((prev) => Math.min(prev + 10, 100));
   };
 
+  const handleSubmitStory = (e) => {
+    e.preventDefault();
+    if (catName && catStory) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 5000);
+      setCatName("");
+      setCatStory("");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 overflow-hidden">
       <header className="bg-white shadow-md sticky top-0 z-10">
@@ -61,23 +90,55 @@ const Index = () => {
           >
             <Cat className="mr-2" /> Feline Fascination
           </motion.h1>
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <TooltipProvider>
-              <Tooltip open={showTooltip}>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" onClick={handleLike}>
-                    <Heart className="mr-2 h-4 w-4" fill={likeCount > 0 ? "red" : "none"} /> Like ({likeCount})
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Congratulations! You're a true cat lover!</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </motion.div>
+          <div className="flex items-center space-x-4">
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <TooltipProvider>
+                <Tooltip open={showTooltip}>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={handleLike}>
+                      <Heart className="mr-2 h-4 w-4" fill={likeCount > 0 ? "red" : "none"} /> Like ({likeCount})
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Congratulations! You're a true cat lover!</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </motion.div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Camera className="mr-2 h-4 w-4" /> Share Cat Photo
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Share Your Cat Photo</DialogTitle>
+                  <DialogDescription>
+                    Upload a photo of your feline friend to share with the community!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Name
+                    </Label>
+                    <Input id="name" className="col-span-3" />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="photo" className="text-right">
+                      Photo
+                    </Label>
+                    <Input id="photo" type="file" className="col-span-3" />
+                  </div>
+                </div>
+                <Button type="submit">Upload Photo</Button>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </header>
 
@@ -202,7 +263,7 @@ const Index = () => {
             </TabsContent>
           </Tabs>
 
-          <Card>
+          <Card className="mb-12">
             <CardHeader>
               <CardTitle>Cat Facts Quiz</CardTitle>
               <CardDescription>Test your knowledge about cats!</CardDescription>
@@ -210,6 +271,69 @@ const Index = () => {
             <CardContent>
               <p className="mb-4">Coming soon! Stay tuned for an interactive quiz to test your cat expertise.</p>
               <Button variant="outline">Notify Me When Available</Button>
+            </CardContent>
+          </Card>
+
+          <Card className="mb-12">
+            <CardHeader>
+              <CardTitle>Share Your Cat's Story</CardTitle>
+              <CardDescription>Tell us about your feline friend!</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmitStory}>
+                <div className="grid w-full gap-4">
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="name">Your Cat's Name</Label>
+                    <Input id="name" placeholder="Enter your cat's name" value={catName} onChange={(e) => setCatName(e.target.value)} />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="story">Your Cat's Story</Label>
+                    <Textarea id="story" placeholder="Tell us about your cat" value={catStory} onChange={(e) => setCatStory(e.target.value)} />
+                  </div>
+                  <Button type="submit">Submit Story</Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {showAlert && (
+            <Alert className="mb-12">
+              <AlertTitle>Success!</AlertTitle>
+              <AlertDescription>
+                Your cat's story has been submitted successfully. Thank you for sharing!
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Card className="mb-12">
+            <CardHeader>
+              <CardTitle>Cat Adoption Trends</CardTitle>
+              <CardDescription>Monthly cat adoption statistics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={catAdoptionData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <RechartsTooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="adoptions" stroke="#8884d8" activeDot={{ r: 8 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Support Cat Shelters</CardTitle>
+              <CardDescription>Help cats in need find loving homes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4">Your donation can make a difference in the lives of cats waiting for their forever homes.</p>
+              <Button variant="outline">
+                <Gift className="mr-2 h-4 w-4" /> Make a Donation
+              </Button>
             </CardContent>
           </Card>
         </motion.div>
